@@ -7,7 +7,17 @@ const { rotateBlock } = require("./handlers/rotateBlock");
 const { api } = require("./handlers/api");
 const cookieSession = require('cookie-session');
 
-const createApp = (sessions, game) => {
+
+
+const gameRouter = game => {
+  const router = express.Router();
+  router.post('/positions', updatePositions(game));
+  router.post('/rotate', rotateBlock(game));
+  router.get('/api', api(game));
+  return router;
+};
+
+const createApp = (game) => {
   const app = express();
   app.use(morgan('tiny'));
   app.use(express.urlencoded({ extended: true }));
@@ -18,10 +28,9 @@ const createApp = (sessions, game) => {
     keys: ['key']
   }))
 
-  app.post('/start', initGame(sessions, game));
-  app.post('/play/positions', updatePositions(game));
-  app.post('/play/rotate', rotateBlock(game));
-  app.get('/play/api', api(game));
+  app.post('/start', initGame(game));
+
+  app.use('/play', gameRouter(game))
   app.use(express.static('public'));
   return app;
 };

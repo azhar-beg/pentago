@@ -4,6 +4,7 @@ class Game {
   #board;
   #currentPlayer;
   #action;
+  #winner;
   constructor() {
     this.#player1 = {};
     this.#player2 = {};
@@ -47,7 +48,7 @@ class Game {
 
   #rotateRight(block) {
     const lastIndex = block.length - 1;
-    return block[lastIndex].concat(block).slice(0, -1);
+    return [block[lastIndex], ...(block).slice(0, -1)];
   }
 
   rotate(blockNum, direction) {
@@ -69,6 +70,19 @@ class Game {
 
   get status() {
     return this.#board;
+  }
+
+  hasWon() {
+    const horizontal = [[0, 1, 4], [1, 4, 5], [3, 2, 7], [2, 7, 6], [8, 9, 12], [9, 12, 13], [11, 10, 15], [10, 15, 14]];
+    const vertical = [[0, 3, 8], [3, 8, 11], [1, 2, 9], [2, 9, 10], [4, 7, 12], [7, 12, 15], [5, 6, 13], [6, 13, 14]];
+    const winningComb = horizontal.concat(vertical);
+    const board = this.#board.flat();
+    return winningComb.find(combination => {
+      return combination.every(index => {
+        return board[combination[0]] === board[index] &&
+          board[index] !== null
+      });
+    });
   }
 }
 
