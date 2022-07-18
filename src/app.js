@@ -14,7 +14,7 @@ const createApp = (sessions, game) => {
   app.use(cookieParser());
 
   app.use(cookieSession({
-    name: 'session',
+    name: 'sessionId',
     keys: ['key']
   }))
 

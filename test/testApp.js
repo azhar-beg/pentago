@@ -24,7 +24,7 @@ describe('path: /start ', () => {
 });
 
 describe('path: /play', () => {
-  it.only('should update given position of current player', (done) => {
+  it('should update given position of current player', (done) => {
     const game = new Game();
     const sessions = {};
     request(createApp(sessions, game))
@@ -32,7 +32,7 @@ describe('path: /play', () => {
       .send("name=a")
       .expect(302)
       .end((err, res) => {
-        const id = res.headers['set-cookie'][0].split(';')[0];
+        const id = res.headers['set-cookie'];
         request(createApp(sessions, game))
           .post('/play/positions')
           .set('Cookie', id)
@@ -45,16 +45,21 @@ describe('path: /play', () => {
 describe('path: /rotate', () => {
   it('should rotate given quad', (done) => {
     const game = new Game();
-    game.addPlayer('a');
-    game.addPlayer('b');
-    game.updatePositions(0, 0);
-    game.changeAction();
-    const sessions = { 1: { name: 'a' }, 2: { name: 'b' } };
+    const sessions = {};
     request(createApp(sessions, game))
-      .post('/play/rotate')
-      .send("quad=1&direction=left")
-      .set('Cookie', ['sessionId=1'])
-      .expect(200, done)
+      .post('/start')
+      .send("name=a")
+      .expect(302)
+      .end((err, res) => {
+        game.updatePositions(0, 0);
+        game.changeAction();
+        const id = res.headers['set-cookie'];
+        request(createApp(sessions, game))
+          .post('/play/rotate')
+          .send("quad=1&direction=left")
+          .set('Cookie', id)
+          .expect(200, done)
+      });
   });
 });
 

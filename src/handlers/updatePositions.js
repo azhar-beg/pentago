@@ -1,6 +1,5 @@
 const updatePositions = (game) => {
   return (req, res) => {
-    console.log(req.session, req.cookies);
     if (!game.isActionValid('update', req.session.name)) {
       res.status(405);
       res.end();

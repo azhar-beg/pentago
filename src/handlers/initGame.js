@@ -20,11 +20,6 @@ const initGame = (sessions, game) => {
 
     req.session.name = req.body.name
     game.addPlayer(req.body.name);
-
-    const time = new Date();
-    const sessionId = time.getTime();
-    sessions[sessionId] = req.session;
-    res.cookie('sessionId', sessionId);
     res.redirect('/game.html');
   };
 };
