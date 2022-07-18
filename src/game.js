@@ -3,10 +3,12 @@ class Game {
   #player2;
   #board;
   #currentPlayer;
+  #action;
   constructor() {
     this.#player1 = {};
     this.#player2 = {};
     this.#currentPlayer = this.#player1;
+    this.#action = 'update';
   }
 
   #initBoard() {
@@ -15,13 +17,13 @@ class Game {
   }
 
   addPlayer(name) {
-    let player = this.#player2;
-    let color = 'white';
+    let player = this.#player1;
+    let color = 'black';
+    this.#initBoard();
 
-    if (!player.name) {
-      this.#initBoard();
-      player = this.#player1;
-      color = 'black';
+    if (player.name) {
+      player = this.#player2;
+      color = 'white';
     }
 
     player.name = name;
@@ -36,7 +38,7 @@ class Game {
 
   updatePositions(block, cell) {
     const player = this.#currentPlayer;
-    this.#board[block - 1][cell - 1] = player.color;
+    this.#board[block][cell] = player.color;
   }
 
   #rotateLeft(block) {
@@ -49,12 +51,20 @@ class Game {
   }
 
   rotate(blockNum, direction) {
-    let block = this.#board[blockNum - 1];
+    let block = this.#board[blockNum];
     if (direction === 'left') {
-      this.#board[blockNum - 1] = this.#rotateLeft(block);
+      this.#board[blockNum] = this.#rotateLeft(block);
       return;
     }
-    this.#board[blockNum - 1] = this.#rotateRight(block);
+    this.#board[blockNum] = this.#rotateRight(block);
+  }
+
+  isActionValid(action, name) {
+    return this.#action === action && this.#currentPlayer.name === name;
+  }
+
+  changeAction() {
+    this.#action = this.#action === 'update' ? 'rotate' : 'update';
   }
 
   get status() {

@@ -10,12 +10,6 @@ const injectSession = (sessions) => {
   }
 }
 
-const createSession = ({ name }) => {
-  const time = new Date();
-  const sessionId = time.getTime();
-  return { name, time, sessionId };
-};
-
 const initGame = (sessions, game) => {
   return (req, res) => {
     if (Object.keys(sessions).length === 2) {
@@ -24,10 +18,12 @@ const initGame = (sessions, game) => {
       return;
     }
 
-    const session = createSession(req.body);
-    game.addPlayer(session.name);
-    const { sessionId } = session;
-    sessions[sessionId] = session;
+    req.session.name = req.body.name
+    game.addPlayer(req.body.name);
+
+    const time = new Date();
+    const sessionId = time.getTime();
+    sessions[sessionId] = req.session;
     res.cookie('sessionId', sessionId);
     res.redirect('/game.html');
   };
